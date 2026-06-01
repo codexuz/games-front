@@ -1,0 +1,204 @@
+.home-page {
+  min-height: 100vh;
+  background: var(--kahoot-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  padding: 20px;
+}
+
+/* Add some Kahoot-style geometric background elements */
+.home-page::before {
+  content: '';
+  position: absolute;
+  top: -10vw;
+  left: -10vw;
+  width: 50vw;
+  height: 50vw;
+  background: var(--kahoot-red);
+  border-radius: 50%;
+  opacity: 0.1;
+  z-index: 0;
+}
+.home-page::after {
+  content: '';
+  position: absolute;
+  bottom: -10vw;
+  right: -5vw;
+  width: 60vw;
+  height: 40vw;
+  background: var(--kahoot-blue);
+  border-radius: 30%;
+  transform: rotate(15deg);
+  opacity: 0.1;
+  z-index: 0;
+}
+
+.home-content {
+  width: 100%;
+  max-width: 480px;
+  background: var(--kahoot-light);
+  padding: 40px 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Logo ─────────────────────────────────────────────────────────────────────── */
+.home-logo { margin-bottom: 30px; }
+
+.logo-icon {
+  font-size: 60px;
+  display: inline-block;
+  animation: logo-bounce 2s infinite cubic-bezier(0.28, 0.84, 0.42, 1);
+}
+@keyframes logo-bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.05); }
+}
+
+.home-logo h1 {
+  font-size: 42px;
+  font-weight: 900;
+  color: var(--kahoot-dark);
+  margin: 10px 0 5px;
+  letter-spacing: -1px;
+}
+
+.tagline {
+  color: #666666;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.teacher-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #f0f0f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #333333;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.teacher-bar span { flex: 1; font-weight: 700; text-align: left; }
+.teacher-bar-dash {
+  background: #8b5cf6;
+  border: none;
+  border-bottom: 4px solid #7c3aed;
+  color: #ffffff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform 0.1s, border-bottom-width 0.1s;
+}
+.teacher-bar-dash:active {
+  transform: translateY(4px);
+  border-bottom-width: 0px;
+}
+.teacher-bar-out {
+  background: #f3f4f6;
+  border: none;
+  border-bottom: 4px solid #e5e7eb;
+  color: #6b7280;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform 0.1s, border-bottom-width 0.1s;
+}
+.teacher-bar-out:active {
+  transform: translateY(4px);
+  border-bottom-width: 0px;
+}
+
+.teacher-signin-btn {
+  background: #ffffff;
+  border: 2px solid #e5e7eb;
+  border-bottom: 4px solid #e5e7eb;
+  color: #6b7280;
+  padding: 12px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 700;
+  width: 100%;
+  margin-bottom: 20px;
+  transition: all 0.1s;
+}
+.teacher-signin-btn:active {
+  transform: translateY(4px);
+  border-bottom-width: 0px;
+}
+
+/* ── Buttons ──────────────────────────────────────────────────────────────────── */
+.home-buttons { display: flex; flex-direction: column; gap: 16px; }
+
+.home-buttons button {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 24px;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.1s, border-bottom-width 0.1s, filter 0.1s;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-host { 
+  background: var(--kahoot-purple); 
+  box-shadow: 0 6px 0 #2e0c63; 
+}
+.btn-player { 
+  background: var(--kahoot-green); 
+  box-shadow: 0 6px 0 #165605; 
+}
+.btn-contest { 
+  background: var(--kahoot-red); 
+  box-shadow: 0 6px 0 #b6131a; 
+}
+
+.home-buttons button:hover {
+  filter: brightness(1.1);
+}
+.home-buttons button:active {
+  transform: translateY(6px);
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-icon { 
+  font-size: 36px; 
+  flex-shrink: 0; 
+  background: rgba(0,0,0,0.15);
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+}
+
+.btn-title {
+  font-size: 22px;
+  font-weight: 900;
+  margin-bottom: 4px;
+}
+.btn-sub {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.85);
+}

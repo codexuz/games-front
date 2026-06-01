@@ -1,0 +1,590 @@
+/* ── Base ─────────────────────────────────────────────────────────────────── */
+.gs-controller { width: 100%; height: 100%; }
+
+.gs-screen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+  font-family: 'Nunito', Arial, sans-serif;
+}
+
+.gs-gradient {
+  background: linear-gradient(160deg, var(--kahoot-purple) 0%, var(--kahoot-blue) 100%);
+}
+
+/* ── Blobs ────────────────────────────────────────────────────────────────── */
+.gs-blobs { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.gs-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.04);
+}
+
+/* ── Dark Background ───────────────────────────────────────────────────────── */
+.gs-dark-bg {
+  background: #090909;
+}
+
+/* ── Custom Topbar ────────────────────────────────────────────────────────── */
+.gs-topbar-custom {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  width: 100%;
+  background: #090909;
+}
+.gs-top-left, .gs-top-right { flex: 1; }
+.gs-top-right { display: flex; justify-content: flex-end; }
+.gs-q-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #333333;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.gs-submit-btn {
+  background: #e0e0e0;
+  color: #333333;
+  font-weight: 900;
+  border-radius: 4px;
+  padding: 10px 24px;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  font-family: inherit;
+  transition: opacity 0.2s, background 0.2s;
+}
+.gs-submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.gs-submit-btn:not(:disabled):hover { background: #d0d0d0; }
+
+/* ── Main Layout (Center area) ────────────────────────────────────────────── */
+.gs-main-layout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 76px 20px 60px 120px;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 16px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Media Section & Timer ────────────────────────────────────────────────── */
+.gs-media-section {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 280px;
+  margin-top: -20px;
+}
+.gs-timer-circle {
+  position: fixed;
+  left: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #333333;
+  font-size: 36px;
+  font-weight: 900;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 20;
+}
+.gs-media-placeholder {
+  width: 65%;
+  height: 380px;
+  background: #111111;
+  border-radius: 4px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+.gs-placeholder-animation { position: relative; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; }
+.gs-orbit-1, .gs-orbit-2 { position: absolute; border: 1px solid rgba(255,255,255,0.15); border-radius: 50%; }
+.gs-orbit-1 { width: 140px; height: 140px; left: calc(50% - 100px); }
+.gs-orbit-2 { width: 280px; height: 280px; }
+.gs-planet-1 { position: absolute; width: 40px; height: 40px; background: #f472b6; border-radius: 50%; left: calc(50% - 50px); z-index: 2; }
+.gs-planet-2 { position: absolute; width: 100px; height: 100px; background: #818cf8; border-radius: 50%; left: calc(50% - 10px); z-index: 3; }
+
+/* ── Question & Options ───────────────────────────────────────────────────── */
+.gs-question-section { width: 100%; display: flex; flex-direction: column; gap: 8px; max-width: 900px; margin: 0 auto; }
+.gs-question-block {
+  background: #e8e8e8;
+  color: #333333;
+  padding: 18px 24px;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+.gs-question-text { margin: 0; font-size: 26px; font-weight: 900; }
+
+.gs-options-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
+.gs-option-card {
+  background: #e8e8e8;
+  color: #333333;
+  padding: 16px 20px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  border: none;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+  cursor: pointer;
+  text-align: left;
+  transition: transform 0.1s, background 0.1s;
+  font-family: inherit;
+}
+.gs-option-card:hover:not(:disabled) { background: #dcdcdc; }
+.gs-option-card:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.1); }
+.gs-option-card.selected { background: #fdfdfd; box-shadow: 0 4px 0 rgba(0,0,0,0.15), inset 0 0 0 2px #333; }
+.gs-option-radio {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 2px solid #aaaaaa;
+  margin-right: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  transition: border-color 0.1s;
+}
+.gs-option-card.selected .gs-option-radio { border-color: #333333; }
+.gs-option-radio-inner { width: 12px; height: 12px; border-radius: 50%; background: #333333; }
+.gs-option-text { font-size: 20px; font-weight: 800; flex: 1; text-align: center; }
+
+/* ── Custom Footer ────────────────────────────────────────────────────────── */
+.gs-footer-custom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 20px;
+  display: flex;
+  background: #111111;
+  z-index: 10;
+}
+.gs-player-info { display: flex; align-items: center; gap: 10px; color: #ffffff; }
+.gs-player-avatar { width: 40px; height: 40px; background: #ffffff; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+.gs-player-details { display: flex; flex-direction: column; }
+.gs-player-name { font-size: 15px; font-weight: 900; }
+.gs-player-score { font-size: 13px; font-weight: 700; color: #aaaaaa; }
+
+/* ── Host view ────────────────────────────────────────────────────────────── */
+.gs-host-view {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+}
+.gs-host-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(255,255,255,0.1);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+}
+.gs-host-label {
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+}
+.gs-host-options-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 480px;
+  margin-top: 20px;
+}
+.gs-host-option-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+.gs-host-opt-text { flex: 1; }
+
+/* ── Idle ─────────────────────────────────────────────────────────────────── */
+.gs-idle-content {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+/* ── Waiting overlay ──────────────────────────────────────────────────────── */
+.gs-waiting-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.gs-waiting-spinner {
+  width: 100px;
+  height: 100px;
+  border: 10px solid rgba(255,255,255,0.15);
+  border-top-color: #ffffff;
+  border-radius: 50%;
+}
+
+.gs-idle-spinner {
+  width: 60px;
+  height: 60px;
+  border: 5px solid rgba(255,255,255,0.1);
+  border-top-color: var(--kahoot-blue);
+  border-radius: 50%;
+}
+.gs-idle-text {
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+/* ── Result screen ────────────────────────────────────────────────────────── */
+.gs-result-title {
+  font-size: 20px;
+  font-weight: 900;
+  color: #ffffff;
+  text-align: center;
+}
+
+.gs-player-result-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 600px;
+  margin-bottom: 30px;
+  color: #ffffff;
+}
+.gs-player-result-banner.correct { background: var(--kahoot-green); box-shadow: 0 6px 0 #165605; }
+.gs-player-result-banner.wrong { background: var(--kahoot-red); box-shadow: 0 6px 0 #991b1b; }
+
+.gs-banner-icon { font-size: 48px; }
+.gs-banner-text h2 { margin: 0; font-size: 28px; font-weight: 900; }
+.gs-banner-text p { margin: 4px 0 0; font-size: 18px; font-weight: 700; opacity: 0.9; }
+
+.gs-result-answers-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 900px;
+}
+.gs-result-ans-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-radius: 8px;
+  background: #1e1e1e;
+  border: 2px solid #333;
+}
+.gs-result-ans-card.correct { border-color: var(--kahoot-green); background: rgba(38, 137, 12, 0.1); }
+.gs-result-ans-card.wrong { opacity: 0.5; }
+.gs-ans-left { display: flex; align-items: center; gap: 12px; }
+.gs-ans-text { font-size: 18px; font-weight: 800; color: #ffffff; }
+.gs-ans-check { color: var(--kahoot-green); font-weight: 900; font-size: 16px; }
+
+.gs-next-label-modern {
+  position: absolute;
+  bottom: 80px;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.5);
+  z-index: 2;
+}
+
+/* ── End / Podium ─────────────────────────────────────────────────────────── */
+.gs-end { display: flex; flex-direction: column; height: 100vh; overflow: hidden; position: relative; }
+
+.gs-end-bg {
+  background: #2b0b5c; /* Dark purple background */
+}
+
+.gs-sun-rays-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.gs-sun-rays {
+  width: 200vw;
+  height: 200vw;
+  min-width: 200vh;
+  min-height: 200vh;
+  border-radius: 50%;
+  background: repeating-conic-gradient(
+    from 0deg,
+    transparent 0deg 15deg,
+    rgba(255, 255, 255, 0.04) 15deg 30deg
+  );
+}
+
+.gs-end-header-container {
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 20;
+}
+.gs-end-title-box {
+  background: #ffffff;
+  color: #333333;
+  font-size: 24px;
+  font-weight: 900;
+  padding: 10px 40px;
+  border-radius: 4px;
+  box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+}
+
+.gs-end-scroll-container {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 20px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.gs-podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0;
+  height: 40vh;
+  min-height: 280px;
+  width: 100%;
+  max-width: 600px;
+  margin-top: auto;
+}
+.gs-podium-empty { width: 30%; }
+.gs-podium-col {
+  width: 32%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  position: relative;
+}
+
+.gs-podium-avatar-wrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 10;
+  margin-bottom: -15px; /* Pull down into the block slightly */
+}
+.gs-podium-crown {
+  position: absolute;
+  top: -35px;
+  font-size: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+  z-index: 11;
+}
+.gs-podium-avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: #6c4298;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  border: 4px solid #8e5bd6;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.gs-podium-bar {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 25px;
+  padding-bottom: 20px;
+  box-shadow: inset 0 2px 0 rgba(255,255,255,0.1), inset 0 0 10px rgba(0,0,0,0.1), 0 -2px 10px rgba(0,0,0,0.2);
+  border-radius: 4px 4px 0 0;
+}
+
+.gs-podium-rank-1 { z-index: 3; }
+.gs-podium-rank-2 { z-index: 2; margin-right: -4%; }
+.gs-podium-rank-3 { z-index: 1; margin-left: -4%; }
+
+.gs-podium-rank-1 .gs-podium-bar { background: #5a2e98; }
+.gs-podium-rank-2 .gs-podium-bar { background: #6c4298; }
+.gs-podium-rank-3 .gs-podium-bar { background: #6c4298; }
+
+.gs-podium-rank-shape {
+  width: 44px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 8px;
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+
+.gs-podium-rank-1 .gs-podium-rank-shape {
+  background: var(--kahoot-yellow);
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.gs-podium-rank-2 .gs-podium-rank-shape {
+  background: #9ca3af;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+.gs-podium-rank-3 .gs-podium-rank-shape {
+  background: #b45309;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+}
+
+.gs-podium-name { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 90%; }
+.gs-podium-score { font-size: 15px; font-weight: 700; color: #fff; opacity: 0.9; }
+
+/* Runners up */
+.gs-runners-up-section {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 10px;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+}
+.gs-runners-up-title {
+  padding: 8px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 800;
+  color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.gs-runners-up-list {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px;
+}
+.gs-runner-up-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #fff;
+}
+.gs-ru-rank { font-weight: 900; font-size: 16px; width: 20px; text-align: center; }
+.gs-ru-avatar { width: 28px; height: 28px; background: #6c4298; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.gs-ru-name { font-size: 15px; font-weight: 800; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.gs-ru-score { font-size: 14px; font-weight: 700; opacity: 0.9; }
+
+.gs-end-actions {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(9,9,9,1) 50%, rgba(9,9,9,0) 100%);
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  z-index: 10;
+}
+.gs-end-btn {
+  padding: 14px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 900;
+  border: none;
+  cursor: pointer;
+  color: #ffffff;
+  transition: transform 0.1s;
+}
+.gs-end-btn:active { transform: translateY(2px); }
+.gs-end-primary { background: var(--kahoot-green); box-shadow: 0 4px 0 #165605; }
+.gs-end-secondary { background: #333333; box-shadow: 0 4px 0 #111111; color: #ffffff; }
+
+/* ── Responsive ───────────────────────────────────────────────────────────── */
+@media (max-width: 768px), (max-aspect-ratio: 1/1) {
+  .gs-result-answers-grid { grid-template-columns: 1fr; }
+  .gs-main-layout { padding: 0 10px; margin-top: 10px; }
+  .gs-options-grid { grid-template-columns: 1fr; }
+  .gs-media-section { min-height: auto; flex-direction: column; gap: 16px; margin-top: 0; }
+  .gs-timer-circle { position: relative; width: 60px; height: 60px; font-size: 28px; left: auto; transform: none; align-self: flex-start; margin-bottom: -10px; }
+  .gs-media-placeholder { width: 100%; height: 220px; }
+  .gs-question-text { font-size: 18px; }
+  .gs-option-text { font-size: 16px; }
+  .gs-topbar-custom { padding: 10px; height: auto; }
+  .gs-q-circle { width: 36px; height: 36px; font-size: 16px; }
+  .gs-player-result-banner { padding: 16px 20px; }
+  .gs-banner-icon { font-size: 32px; }
+  .gs-banner-text h2 { font-size: 22px; }
+  .gs-podium-container { height: 25vh; min-height: 200px; }
+}
