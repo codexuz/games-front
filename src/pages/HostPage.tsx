@@ -50,7 +50,12 @@ export default function HostPage() {
       lobbyAudio.current?.pause();
       lobbyAudio.current = null;
     }
-  }, [phase]);
+    return () => {
+      if (lobbyAudio.current) {
+        lobbyAudio.current.pause();
+      }
+    };
+  }, [phase, muted]);
 
   // QR code
   useEffect(() => {
@@ -232,6 +237,9 @@ export default function HostPage() {
   // ── Lobby ─────────────────────────────────────────────────────────────────
   if (phase === 'lobby') return (
     <div className="game-page host-lobby-dark">
+      <div style={{ position: 'absolute', top: 24, left: 24, zIndex: 20 }}>
+        <button className="back-btn" onClick={() => setPhase('setup')}>← Cancel</button>
+      </div>
       <div className="host-top-banner">
         <div className="pin-section">
           <div className="pin-label">Game PIN</div>
