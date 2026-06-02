@@ -26,7 +26,7 @@ export default function HostPage() {
   const [muted, setMuted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showShare, setShowShare] = useState(false);
-  const [sampleQuizzes, setSampleQuizzes] = useState<Quiz[]>([]);
+
   const [teacherQuizzes, setTeacherQuizzes] = useState<Quiz[]>([]);
   const [roomCode, setRoomCode] = useState('');
   const [hostName, setHostName] = useState(() => teacher?.name || '');
@@ -88,10 +88,6 @@ export default function HostPage() {
     return () => { socket.off('connect', onConnect); socket.off('disconnect', onDisconnect); };
   }, [socket]);
 
-  // Load quizzes
-  useEffect(() => {
-    fetch(`${API}/quizzes`).then(r => r.json()).then(setSampleQuizzes).catch(() => {});
-  }, []);
 
   useEffect(() => {
     if (!teacher || !token) { setTeacherQuizzes([]); return; }
@@ -197,39 +193,30 @@ export default function HostPage() {
       <div className="setup-form">
         <input className="input-field" placeholder="Your name (host)" value={hostName} onChange={e => setHostName(e.target.value)} />
         {teacher ? (
-          teacherQuizzes.length > 0 && <>
-            <div className="quiz-list-header">
-              <h3>My Quizzes</h3>
-              <button className="btn-secondary" onClick={() => nav('/dashboard')}>Manage →</button>
-            </div>
-            <div className="quiz-grid">
-              {teacherQuizzes.map(q => (
-                <div key={q.id} className="quiz-card teacher-card" onClick={() => createRoom(q.id)}>
-                  <div className="quiz-emoji">✏️</div>
-                  <div className="quiz-title">{q.title}</div>
-                  <div className="quiz-meta">{q.questions.length} questions</div>
-                  <div className="quiz-start-hint">Click to host →</div>
-                </div>
-              ))}
-            </div>
-          </>
+          teacherQuizzes.length > 0 && (
+            <>
+              <div className="quiz-list-header">
+                <h3>My Quizzes</h3>
+                <button className="btn-secondary" onClick={() => nav('/dashboard')}>Manage →</button>
+              </div>
+              <div className="quiz-grid">
+                {teacherQuizzes.map(q => (
+                  <div key={q.id} className="quiz-card teacher-card" onClick={() => createRoom(q.id)}>
+                    <div className="quiz-emoji">✏️</div>
+                    <div className="quiz-title">{q.title}</div>
+                    <div className="quiz-meta">{q.questions.length} questions</div>
+                    <div className="quiz-start-hint">Click to host →</div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )
         ) : (
           <div className="teacher-cta">
             <span>👩‍🏫 Teacher?</span>
             <button className="btn-secondary" onClick={() => nav('/auth')}>Sign in to use your quizzes</button>
           </div>
         )}
-        <div className="quiz-list-header"><h3>Sample Quizzes</h3></div>
-        <div className="quiz-grid">
-          {sampleQuizzes.map(q => (
-            <div key={q.id} className="quiz-card" onClick={() => createRoom(q.id)}>
-              <div className="quiz-emoji">📋</div>
-              <div className="quiz-title">{q.title}</div>
-              <div className="quiz-meta">{q.questions.length} questions</div>
-              <div className="quiz-start-hint">Click to host →</div>
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   );
