@@ -14,7 +14,7 @@ type Phase = 'setup' | 'lobby' | 'playing' | 'ended';
 interface Quiz {
   id: string;
   title: string;
-  questions: { id: string; text: string; timeLimit: number; options: string[]; correct: number }[];
+  questions: { id: string; text: string; type: string; questionData: any; timeLimit: number; points: number }[];
 }
 
 export default function HostPage() {
@@ -36,7 +36,7 @@ export default function HostPage() {
 
   const lobbyAudio = useRef<HTMLAudioElement | null>(null);
   const modalQrRef = useRef<HTMLCanvasElement | null>(null);
-  const lastOptions = useRef<string[]>([]);
+
   const roomCodeRef = useRef('');
 
   // Lobby audio
@@ -106,10 +106,19 @@ export default function HostPage() {
     const onPlayers = ({ players }: any) => setPlayers(players);
 
     const onQuestion = (data: any) => {
-      lastOptions.current = data.options;
       setGameView({
         type: 'question',
-        data: { ...data, role: 'host' },
+        data: {
+          index: data.index,
+          total: data.total,
+          text: data.text,
+          type: data.type || 'multiple_choice',
+          questionData: data.questionData || {},
+          timeLimit: data.timeLimit,
+          points: data.points || 1000,
+          imageUrl: data.imageUrl || null,
+          role: 'host' as const,
+        },
       });
       setPhase('playing');
     };
@@ -117,7 +126,13 @@ export default function HostPage() {
     const onResult = (data: any) => {
       setGameView({
         type: 'result',
-        data: { ...data, options: lastOptions.current },
+        data: {
+          type: data.type || 'multiple_choice',
+          questionData: data.questionData || {},
+          leaderboard: data.leaderboard,
+          isLast: data.isLast,
+          pollResults: data.pollResults,
+        },
       });
     };
 

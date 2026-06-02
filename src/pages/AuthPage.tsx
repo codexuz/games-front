@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { motion } from 'framer-motion';
 import './AuthPage.css';
 
 export default function AuthPage() {
@@ -34,54 +35,51 @@ export default function AuthPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-card">
-        <div className="auth-logo">⚡ QuizBlitz</div>
-        <h2>{mode === 'login' ? 'Teacher Login' : 'Create Account'}</h2>
+      <div className="auth-bg-mesh" />
+      <motion.div
+        className="auth-card"
+        initial={{ opacity: 0, y: 20, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.5, type: 'spring' }}
+      >
+        <div className="auth-logo">
+          <span className="auth-logo-icon">⚡</span>
+          <span className="auth-logo-text">QuizBlitz</span>
+        </div>
+        <h2>{mode === 'login' ? 'Welcome back' : 'Create Account'}</h2>
         <p className="auth-sub">
           {mode === 'login' ? 'Sign in to manage your quizzes' : 'Register as a teacher to create quizzes'}
         </p>
 
         <form onSubmit={handleSubmit} className="auth-form">
           {mode === 'register' && (
-            <div className="field-group">
+            <motion.div className="field-group" initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} transition={{ duration: 0.3 }}>
               <label>Full Name</label>
-              <input
-                className="input-field"
-                type="text"
-                placeholder="Ms. Johnson"
-                value={name}
-                onChange={e => setName(e.target.value)}
-                required
-              />
-            </div>
+              <input className="input-field" type="text" placeholder="Ms. Johnson" value={name} onChange={e => setName(e.target.value)} required />
+            </motion.div>
           )}
           <div className="field-group">
             <label>Email</label>
-            <input
-              className="input-field"
-              type="email"
-              placeholder="teacher@school.edu"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              required
-            />
+            <input className="input-field" type="email" placeholder="teacher@school.edu" value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="field-group">
             <label>Password</label>
-            <input
-              className="input-field"
-              type="password"
-              placeholder={mode === 'register' ? 'At least 6 characters' : '••••••••'}
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-            />
+            <input className="input-field" type="password" placeholder={mode === 'register' ? 'At least 6 characters' : '••••••••'} value={password} onChange={e => setPassword(e.target.value)} required />
           </div>
 
-          {error && <div className="auth-error">⚠ {error}</div>}
+          {error && (
+            <motion.div className="auth-error" initial={{ opacity: 0, y: -5 }} animate={{ opacity: 1, y: 0 }}>
+              ⚠ {error}
+            </motion.div>
+          )}
 
           <button className="btn-primary auth-submit" type="submit" disabled={loading}>
-            {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Create Account'}
+            {loading ? (
+              <span className="auth-loading">
+                <span className="auth-spinner" />
+                Please wait…
+              </span>
+            ) : mode === 'login' ? 'Sign In' : 'Create Account'}
           </button>
         </form>
 
@@ -94,7 +92,7 @@ export default function AuthPage() {
         </div>
 
         <button className="auth-back" onClick={() => nav('/')}>← Back to Home</button>
-      </div>
+      </motion.div>
     </div>
   );
 }

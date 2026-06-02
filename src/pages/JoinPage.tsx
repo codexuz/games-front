@@ -18,7 +18,6 @@ export default function JoinPage() {
   const [players, setPlayers] = useState<{ name: string; score: number }[]>([]);
   const [gameView, setGameView] = useState<GameView>({ type: 'idle' });
 
-  const lastOptions = useRef<string[]>([]);
   const codeRef = useRef('');
   const nameRef = useRef('');
   const scoreRef = useRef(0);
@@ -31,16 +30,22 @@ export default function JoinPage() {
     const onPlayers = ({ players }: any) => setPlayers(players);
 
     const onQuestion = (data: any) => {
-      lastOptions.current = data.options;
       setGameView({
         type: 'question',
         data: {
-          ...data,
-          role: 'player',
+          index: data.index,
+          total: data.total,
+          text: data.text,
+          type: data.type || 'multiple_choice',
+          questionData: data.questionData || {},
+          timeLimit: data.timeLimit,
+          points: data.points || 1000,
+          imageUrl: data.imageUrl || null,
+          role: 'player' as const,
           playerName: nameRef.current,
           currentScore: scoreRef.current,
-          onAnswer: (idx: number) => {
-            socket.emit('player:answer', { code: codeRef.current, answerIndex: idx });
+          onAnswer: (answer: any) => {
+            socket.emit('player:answer', { code: codeRef.current, answer });
           },
         },
       });
@@ -52,7 +57,14 @@ export default function JoinPage() {
     const onResult = (data: any) => {
       setGameView({
         type: 'result',
-        data: { ...data, options: lastOptions.current, playerName: nameRef.current },
+        data: {
+          type: data.type || 'multiple_choice',
+          questionData: data.questionData || {},
+          leaderboard: data.leaderboard,
+          playerName: nameRef.current,
+          isLast: data.isLast,
+          pollResults: data.pollResults,
+        },
       });
     };
 
