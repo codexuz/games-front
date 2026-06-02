@@ -1,0 +1,350 @@
+.leaderboards-wrapper {
+  min-height: 100vh;
+  background: #0f0f1a;
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.lb-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 40px;
+  background: rgba(0, 0, 0, 0.3);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+}
+
+.lb-logo {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 800;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
+  background: linear-gradient(135deg, #a855f7, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.lb-nav {
+  display: flex;
+  gap: 16px;
+}
+
+.lb-nav button {
+  padding: 8px 16px;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.lb-btn-home {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a0a0cc;
+}
+
+.lb-btn-home:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.lb-btn-dash {
+  background: rgba(124, 58, 237, 0.15);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  color: #a78bfa;
+}
+
+.lb-btn-dash:hover {
+  background: rgba(124, 58, 237, 0.25);
+}
+
+/* Main */
+.lb-main {
+  flex: 1;
+  max-width: 1000px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+.lb-title-section {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.lb-title-section h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 3.5rem;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+
+.lb-title-section p {
+  color: #8b8bb8;
+  font-size: 1.1rem;
+}
+
+/* Tabs */
+.lb-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.lb-tab {
+  padding: 12px 24px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  color: #a0a0cc;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+}
+
+.lb-tab:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.lb-tab.active {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(6, 182, 212, 0.1));
+  border-color: rgba(124, 58, 237, 0.4);
+  color: #fff;
+  box-shadow: 0 4px 20px rgba(124, 58, 237, 0.2);
+}
+
+/* Loading state */
+.lb-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  color: #8b8bb8;
+  padding: 60px 0;
+}
+
+.lb-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(124, 58, 237, 0.2);
+  border-top-color: #8b5cf6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Podium */
+.podium-container {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 60px;
+  height: 280px;
+}
+
+.podium-spot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 140px;
+}
+
+.podium-avatar {
+  font-size: 2.5rem;
+  margin-bottom: 8px;
+}
+
+.podium-name {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 4px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.podium-score {
+  font-size: 0.9rem;
+  color: #22d3ee;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.podium-bar {
+  width: 100%;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: center;
+  padding-top: 16px;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.podium-rank-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+.rank-1 .podium-bar {
+  height: 160px;
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+}
+.rank-1 .podium-avatar { font-size: 3.5rem; }
+
+.rank-2 .podium-bar {
+  height: 120px;
+  background: linear-gradient(180deg, #9ca3af 0%, #4b5563 100%);
+}
+
+.rank-3 .podium-bar {
+  height: 90px;
+  background: linear-gradient(180deg, #b45309 0%, #78350f 100%);
+}
+
+/* Table */
+.lb-table-container {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.lb-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.lb-table th {
+  text-align: left;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.2);
+  color: #6a6a99;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.lb-table td {
+  padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.lb-table tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.lb-table tr:last-child td {
+  border-bottom: none;
+}
+
+.rank-col {
+  color: #8b8bb8;
+  font-weight: 700;
+  width: 80px;
+}
+
+.player-col {
+  font-weight: 600;
+  color: #e0e0ff;
+}
+
+.score-col {
+  color: #22d3ee;
+  font-weight: 700;
+}
+
+.acc-col {
+  color: #10b981;
+}
+
+.quiz-col {
+  color: #a0a0cc;
+  font-size: 0.9rem;
+}
+
+/* Recent grid */
+.lb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.recent-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.recent-card:hover {
+  border-color: rgba(124, 58, 237, 0.3);
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.recent-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.recent-winner-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+}
+
+.recent-winner-score {
+  font-size: 1.1rem;
+  color: #22d3ee;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.recent-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.05);
+  margin-bottom: 16px;
+}
+
+.recent-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: #a0a0cc;
+}
+
+.recent-meta strong {
+  color: #6a6a99;
+}
+
+.lb-empty {
+  text-align: center;
+  padding: 40px !important;
+  color: #6a6a99;
+  font-style: italic;
+}

@@ -125,22 +125,25 @@ export default function HomePage() {
             </div>
             <span className="action-arrow">→</span>
           </motion.button>
+          <motion.button
+            className="home-action-btn leaderboard"
+            onClick={() => nav('/leaderboards')}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.6, type: 'spring' }}
+            whileHover={{ scale: 1.03, y: -3 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <div className="action-icon-wrap leaderboard" style={{ background: 'linear-gradient(135deg, rgba(234,179,8,0.2), rgba(245,158,11,0.2))', color: '#f59e0b' }}>
+              <span className="action-icon">🏆</span>
+            </div>
+            <div className="action-text">
+              <div className="action-title">Leaderboards</div>
+              <div className="action-sub">See global top scores and recent victors</div>
+            </div>
+            <span className="action-arrow">→</span>
+          </motion.button>
         </div>
-
-        {/* Question types showcase */}
-        <motion.div
-          className="home-features"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-        >
-          <div className="feature-chip">✨ Multiple Choice</div>
-          <div className="feature-chip">✅ True / False</div>
-          <div className="feature-chip">⌨️ Type Answer</div>
-          <div className="feature-chip">📊 Polls</div>
-          <div className="feature-chip">🎚️ Slider</div>
-          <div className="feature-chip">📋 Ordering</div>
-        </motion.div>
       </div>
     </div>
   );
