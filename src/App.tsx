@@ -7,6 +7,7 @@ import JoinPage from './pages/JoinPage';
 import ContestPage from './pages/ContestPage';
 import AuthPage from './pages/AuthPage';
 import DashboardPage from './pages/DashboardPage';
+import AiGeneratePage from './pages/AiGeneratePage';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/contest" element={<ContestPage />} />
             <Route path="/auth" element={<AuthPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/quiz/ai-generate" element={<AiGeneratePage />} />
           </Routes>
         </BrowserRouter>
       </SocketProvider>

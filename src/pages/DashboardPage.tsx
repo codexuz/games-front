@@ -59,34 +59,6 @@ export default function DashboardPage() {
   const [createError, setCreateError] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
 
-  // AI Generation
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [aiGenerating, setAiGenerating] = useState(false);
-  const [aiError, setAiError] = useState('');
-
-  async function generateWithAI() {
-    if (!aiPrompt.trim()) return setAiError('Please enter a topic or prompt');
-    setAiGenerating(true);
-    setAiError('');
-    try {
-      const res = await fetch(`${API}/ai/generate`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ prompt: aiPrompt }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to generate');
-      setTitle(data.title || 'AI Generated Quiz');
-      setCategory(data.category || 'General');
-      setQuestions(data.questions?.length ? data.questions : [blankQuestion()]);
-      setAiPrompt('');
-    } catch (err: any) {
-      setAiError(err.message);
-    } finally {
-      setAiGenerating(false);
-    }
-  }
-
   // Import
   const fileRef = useRef<HTMLInputElement>(null);
   const [importResult, setImportResult] = useState<{ imported: number; errors: string[] } | null>(null);
@@ -416,6 +388,7 @@ export default function DashboardPage() {
         <nav className="sidebar-nav">
           <button className={activeTab === 'quizzes' ? 'active' : ''} onClick={() => setActiveTab('quizzes')}>📋 My Quizzes</button>
           <button className={activeTab === 'create' ? 'active' : ''} onClick={() => setActiveTab('create')}>✏️ Create Quiz</button>
+          <button onClick={() => nav('/quiz/ai-generate')}>✨ AI Generate</button>
           <button className={activeTab === 'import' ? 'active' : ''} onClick={() => setActiveTab('import')}>📥 Bulk Import</button>
         </nav>
         <div className="sidebar-bottom">
@@ -469,33 +442,6 @@ export default function DashboardPage() {
           <div className="tab-content">
             <div className="tab-header">
               <h1>Create Quiz</h1>
-            </div>
-
-            {/* AI Generator */}
-            <div className="ai-generator-card">
-              <div className="ai-gen-header">
-                <h3>✨ Generate with AI</h3>
-                <span className="ai-gen-desc">Instantly build a quiz from a topic, text, or list of words.</span>
-              </div>
-              <div className="ai-gen-input-row">
-                <input 
-                  className="input-field" 
-                  placeholder="e.g. 'Solar system planets' or 'French vocabulary words'" 
-                  value={aiPrompt} 
-                  onChange={e => setAiPrompt(e.target.value)} 
-                  onKeyDown={e => e.key === 'Enter' && !aiGenerating && generateWithAI()}
-                  disabled={aiGenerating}
-                />
-                <button 
-                  className="btn-ai-gen" 
-                  type="button" 
-                  onClick={generateWithAI} 
-                  disabled={aiGenerating || !aiPrompt.trim()}
-                >
-                  {aiGenerating ? 'Generating...' : 'Generate ✨'}
-                </button>
-              </div>
-              {aiError && <div className="error-message">{aiError}</div>}
             </div>
 
             <form onSubmit={createQuiz} className="create-form">
