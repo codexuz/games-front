@@ -51,6 +51,7 @@ export default function DashboardPage() {
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'quizzes' | 'create' | 'import'>('quizzes');
+  const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
 
   // Create form
   const [title, setTitle] = useState('');
@@ -82,21 +83,45 @@ export default function DashboardPage() {
     setQuizzes(q => q.filter(x => x.id !== id));
   }
 
-  async function createQuiz(e: React.FormEvent) {
+  function startEdit(quiz: Quiz) {
+    setEditingQuizId(quiz.id);
+    setTitle(quiz.title);
+    setCategory(quiz.category || '');
+    setQuestions(quiz.questions.map(q => ({ ...q })));
+    setCreateError('');
+    setActiveTab('create');
+  }
+
+  function cancelEdit() {
+    setEditingQuizId(null);
+    setTitle('');
+    setCategory('');
+    setQuestions([blankQuestion()]);
+    setCreateError('');
+  }
+
+  async function saveQuiz(e: React.FormEvent) {
     e.preventDefault();
     setCreateError('');
     if (!title.trim()) return setCreateError('Title is required');
     setCreateLoading(true);
     try {
-      const res = await fetch(`${API}/teacher/quizzes`, {
-        method: 'POST',
+      const isEdit = !!editingQuizId;
+      const url = isEdit ? `${API}/teacher/quizzes/${editingQuizId}` : `${API}/teacher/quizzes`;
+      const method = isEdit ? 'PUT' : 'POST';
+      const res = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify({ title, category, questions }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      setQuizzes(q => [data, ...q]);
-      setTitle(''); setCategory(''); setQuestions([blankQuestion()]); setCreateError('');
+      if (isEdit) {
+        setQuizzes(q => q.map(x => x.id === editingQuizId ? data : x));
+      } else {
+        setQuizzes(q => [data, ...q]);
+      }
+      cancelEdit();
       setActiveTab('quizzes');
     } catch (err: any) { setCreateError(err.message); } finally { setCreateLoading(false); }
   }
@@ -427,6 +452,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="quiz-row-actions">
+                      <button className="btn-edit" onClick={() => startEdit(q)}>✏️ Edit</button>
                       <button className="btn-host-quiz" onClick={() => nav('/host', { state: { preselect: q.id } })}>▶ Host</button>
                       <button className="btn-delete" onClick={() => deleteQuiz(q.id)}>🗑</button>
                     </div>
@@ -441,10 +467,13 @@ export default function DashboardPage() {
         {activeTab === 'create' && (
           <div className="tab-content">
             <div className="tab-header">
-              <h1>Create Quiz</h1>
+              <h1>{editingQuizId ? 'Edit Quiz' : 'Create Quiz'}</h1>
+              {editingQuizId && (
+                <button className="btn-secondary" onClick={cancelEdit}>✕ Cancel Edit</button>
+              )}
             </div>
 
-            <form onSubmit={createQuiz} className="create-form">
+            <form onSubmit={saveQuiz} className="create-form">
               <div className="form-row">
                 <div className="field-group flex-1">
                   <label>Quiz Title *</label>
@@ -469,7 +498,7 @@ export default function DashboardPage() {
 
               {createError && <div className="error-banner">⚠ {createError}</div>}
               <button className="btn-primary" type="submit" disabled={createLoading}>
-                {createLoading ? 'Saving…' : `Save Quiz (${questions.length} question${questions.length !== 1 ? 's' : ''})`}
+                {createLoading ? 'Saving…' : editingQuizId ? `Update Quiz (${questions.length} question${questions.length !== 1 ? 's' : ''})` : `Save Quiz (${questions.length} question${questions.length !== 1 ? 's' : ''})`}
               </button>
             </form>
           </div>

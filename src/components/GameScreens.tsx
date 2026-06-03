@@ -87,23 +87,23 @@ function Confetti() {
 function TimerRing({ timeLeft, timeLimit }: { timeLeft: number; timeLimit: number }) {
   const secs = Math.ceil(timeLeft / 1000);
   const pct = timeLeft / timeLimit;
-  const radius = 54;
+  const radius = 20;
   const circumference = 2 * Math.PI * radius;
   const dashOffset = circumference * (1 - pct);
   const urgentClass = pct < 0.25 ? 'urgent' : pct < 0.5 ? 'warning' : '';
 
   return (
-    <div className={`gs-timer-ring ${urgentClass}`}>
-      <svg viewBox="0 0 120 120" className="gs-timer-svg">
-        <circle className="gs-timer-track" cx="60" cy="60" r={radius} />
+    <div className={`gs-small-timer ${urgentClass}`}>
+      <svg viewBox="0 0 48 48" className="gs-small-timer-svg">
+        <circle className="gs-timer-track" cx="24" cy="24" r={radius} />
         <circle
           className="gs-timer-progress"
-          cx="60" cy="60" r={radius}
+          cx="24" cy="24" r={radius}
           strokeDasharray={circumference}
           strokeDashoffset={dashOffset}
         />
       </svg>
-      <span className="gs-timer-text">{secs}</span>
+      <span className="gs-small-timer-text">{secs}</span>
     </div>
   );
 }
@@ -581,10 +581,9 @@ export function QuestionScreen({ data, onAnswer }: { data: QuestionData; onAnswe
           <span className="gs-type-badge">{typeLabels[data.type] || data.type}</span>
         </div>
         <div className="gs-top-center">
-          <TimerRing timeLeft={timeLeft} timeLimit={data.timeLimit} />
         </div>
         <div className="gs-top-right">
-          {data.points > 0 && <span className="gs-points-badge">🏆 {data.points} pts</span>}
+          <TimerRing timeLeft={timeLeft} timeLimit={data.timeLimit} />
         </div>
       </div>
 

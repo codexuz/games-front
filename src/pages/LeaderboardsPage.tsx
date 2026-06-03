@@ -108,7 +108,7 @@ export default function LeaderboardsPage() {
                     {getPodiumOrder().map((leader) => {
                       const isFirst = leader.rank === 1;
                       const isSecond = leader.rank === 2;
-                      const isThird = leader.rank === 3;
+                      
                       
                       return (
                         <motion.div 

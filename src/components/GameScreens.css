@@ -108,17 +108,17 @@
   letter-spacing: 2px;
 }
 
-/* ── Timer Ring ─────────────────────────────────────────────────────────── */
-.gs-timer-ring {
+/* ── Small Timer Ring ───────────────────────────────────────────────────────── */
+.gs-small-timer {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.gs-timer-svg {
+.gs-small-timer-svg {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -129,26 +129,26 @@
 .gs-timer-track {
   fill: none;
   stroke: rgba(255, 255, 255, 0.08);
-  stroke-width: 6;
+  stroke-width: 4;
 }
 
 .gs-timer-progress {
   fill: none;
   stroke: #7c3aed;
-  stroke-width: 6;
+  stroke-width: 4;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.1s linear, stroke 0.3s;
 }
 
-.gs-timer-ring.warning .gs-timer-progress {
+.gs-small-timer.warning .gs-timer-progress {
   stroke: #f59e0b;
 }
 
-.gs-timer-ring.urgent .gs-timer-progress {
+.gs-small-timer.urgent .gs-timer-progress {
   stroke: #ef4444;
 }
 
-.gs-timer-ring.urgent {
+.gs-small-timer.urgent {
   animation: timer-pulse 0.5s ease-in-out infinite;
 }
 
@@ -157,10 +157,10 @@
   50% { transform: scale(1.05); }
 }
 
-.gs-timer-text {
+.gs-small-timer-text {
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
-  font-size: 1.4rem;
+  font-size: 1rem;
   color: #f0f0ff;
   z-index: 1;
 }

@@ -157,8 +157,12 @@ function checkAnswer(question: QuestionItem, answer: any): boolean {
     case 'type_answer': {
       const accepted = (question.questionData.acceptedAnswers || []) as string[];
       const caseSensitive = question.questionData.caseSensitive || false;
-      const text = answer?.text || '';
-      return accepted.some(a => caseSensitive ? a === text : a.toLowerCase() === text.toLowerCase());
+      const normalize = (s: string) => {
+        let t = s.trim().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
+        return caseSensitive ? t : t.toLowerCase();
+      };
+      const playerNorm = normalize(answer?.text || '');
+      return accepted.some(a => normalize(a) === playerNorm);
     }
     default:
       return false;
