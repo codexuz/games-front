@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import './AiGeneratePage.css';
 
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL;
 
 export default function AiGeneratePage() {
   const nav = useNavigate();

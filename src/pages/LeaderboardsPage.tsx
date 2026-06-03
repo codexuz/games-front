@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import './LeaderboardsPage.css';
 
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL;
 
 interface LeaderboardEntry {
   rank: number;

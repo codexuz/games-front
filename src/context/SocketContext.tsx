@@ -7,7 +7,7 @@ export function SocketProvider({ children }: { children: ReactNode }) {
   const socketRef = useRef<Socket | null>(null);
 
   if (!socketRef.current) {
-    socketRef.current = io('http://localhost:3001', { autoConnect: true });
+    socketRef.current = io(import.meta.env.VITE_SOCKET_URL, { autoConnect: true });
   }
 
   useEffect(() => {

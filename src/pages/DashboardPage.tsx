@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import './DashboardPage.css';
 
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL;
 
 type QuestionType = 'multiple_choice' | 'true_false' | 'type_answer' | 'slider' | 'poll' | 'ordering';
 

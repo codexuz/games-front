@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import { GameController, type GameView } from '../components/GameScreens';
 import './GamePage.css';
 
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL;
 
 type Phase = 'setup' | 'lobby' | 'playing' | 'ended';
 

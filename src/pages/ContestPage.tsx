@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import './GamePage.css';
 import './ContestPage.css';
 
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL;
 
 type Phase = 'setup_quiz' | 'setup_names' | 'playing' | 'ended';
 type QuestionType = 'multiple_choice' | 'true_false' | 'type_answer';

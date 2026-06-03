@@ -15,7 +15,7 @@ interface AuthCtx {
 }
 
 const AuthContext = createContext<AuthCtx | null>(null);
-const API = 'http://localhost:3001/api';
+const API = import.meta.env.VITE_API_URL;
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [teacher, setTeacher] = useState<Teacher | null>(null);
