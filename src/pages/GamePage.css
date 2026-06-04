@@ -667,3 +667,33 @@
     font-size: 1.1rem;
   }
 }
+
+/* ── Quiz grid load-more ─────────────────────────────────────────────────── */
+.quiz-load-more-row {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  margin-bottom: 4px;
+}
+
+.quiz-load-more-btn {
+  padding: 9px 26px;
+  border-radius: 22px;
+  border: 1px solid rgba(124, 58, 237, 0.35);
+  background: rgba(124, 58, 237, 0.1);
+  color: #a78bfa;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quiz-load-more-btn:hover:not(:disabled) {
+  background: rgba(124, 58, 237, 0.22);
+  border-color: rgba(124, 58, 237, 0.55);
+}
+
+.quiz-load-more-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

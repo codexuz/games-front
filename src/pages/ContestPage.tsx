@@ -313,18 +313,31 @@ export default function ContestPage() {
     return () => { resultAudioRef.current?.pause(); };
   }, [phase]);
 
-  useEffect(() => {
-    fetch(`${API}/quizzes`).then(r => r.json()).then(data => {
-      // Filter to only supported contest types
-      const filtered = (data as Quiz[]).map(q => ({
+  const [quizPage, setQuizPage] = useState(1);
+  const [quizHasMore, setQuizHasMore] = useState(false);
+  const [quizLoadingMore, setQuizLoadingMore] = useState(false);
+
+  useEffect(() => { fetchContestQuizzes(1, false); }, []);
+
+  async function fetchContestQuizzes(page: number, append: boolean) {
+    if (append) setQuizLoadingMore(true);
+    try {
+      const r = await fetch(`${API}/quizzes?page=${page}&limit=12`);
+      const data = await r.json();
+      const raw: Quiz[] = Array.isArray(data.quizzes) ? data.quizzes : [];
+      // Filter to only supported contest question types
+      const filtered = raw.map(q => ({
         ...q,
         questions: q.questions.filter((qu: any) =>
           ['multiple_choice', 'true_false', 'type_answer'].includes(qu.type || 'multiple_choice')
         ),
       })).filter(q => q.questions.length > 0);
-      setQuizzes(filtered);
-    }).catch(() => {});
-  }, []);
+      setQuizzes(prev => append ? [...prev, ...filtered] : filtered);
+      setQuizHasMore(data.pagination?.hasMore ?? false);
+      setQuizPage(page);
+    } catch { if (!append) setQuizzes([]); }
+    finally { if (append) setQuizLoadingMore(false); }
+  }
 
   function startContest() {
     if (!selectedQuiz) return;
@@ -351,6 +364,13 @@ export default function ContestPage() {
             </div>
           ))}
         </div>
+        {quizHasMore && (
+          <div className="quiz-load-more-row">
+            <button className="quiz-load-more-btn" disabled={quizLoadingMore} onClick={() => fetchContestQuizzes(quizPage + 1, true)}>
+              {quizLoadingMore ? 'Loading…' : 'Load more'}
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

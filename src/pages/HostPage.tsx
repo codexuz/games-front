@@ -31,7 +31,15 @@ export default function HostPage() {
   const [showShare, setShowShare] = useState(false);
 
   const [teacherQuizzes, setTeacherQuizzes] = useState<Quiz[]>([]);
+  const [teacherHasMore, setTeacherHasMore] = useState(false);
+  const [teacherPage, setTeacherPage] = useState(1);
+  const [teacherLoadingMore, setTeacherLoadingMore] = useState(false);
+
   const [publicQuizzes, setPublicQuizzes] = useState<Quiz[]>([]);
+  const [publicHasMore, setPublicHasMore] = useState(false);
+  const [publicPage, setPublicPage] = useState(1);
+  const [publicLoadingMore, setPublicLoadingMore] = useState(false);
+
   const [roomCode, setRoomCode] = useState('');
   const [hostName, setHostName] = useState(() => teacher?.name || '');
   const [players, setPlayers] = useState<{ name: string; score: number }[]>([]);
@@ -94,20 +102,39 @@ export default function HostPage() {
 
 
   useEffect(() => {
-    // Always fetch public quizzes (no auth needed)
-    fetch(`${API}/quizzes`)
-      .then(r => r.json())
-      .then(d => setPublicQuizzes(Array.isArray(d) ? d : []))
-      .catch(() => setPublicQuizzes([]));
+    fetchPublic(1, false);
   }, []);
 
   useEffect(() => {
     if (!teacher || !token) { setTeacherQuizzes([]); return; }
-    fetch(`${API}/teacher/quizzes/mine`, { headers: { Authorization: `Bearer ${token}` } })
-      .then(r => r.json())
-      .then(d => setTeacherQuizzes(Array.isArray(d) ? d : []))
-      .catch(() => setTeacherQuizzes([]));
+    fetchTeacher(1, false);
   }, [teacher, token]);
+
+  async function fetchPublic(page: number, append: boolean) {
+    if (append) setPublicLoadingMore(true);
+    try {
+      const r = await fetch(`${API}/quizzes?page=${page}&limit=12`);
+      const data = await r.json();
+      const list: Quiz[] = Array.isArray(data.quizzes) ? data.quizzes : [];
+      setPublicQuizzes(prev => append ? [...prev, ...list] : list);
+      setPublicHasMore(data.pagination?.hasMore ?? false);
+      setPublicPage(page);
+    } catch { if (!append) setPublicQuizzes([]); }
+    finally { if (append) setPublicLoadingMore(false); }
+  }
+
+  async function fetchTeacher(page: number, append: boolean) {
+    if (append) setTeacherLoadingMore(true);
+    try {
+      const r = await fetch(`${API}/teacher/quizzes/mine?page=${page}&limit=12`, { headers: { Authorization: `Bearer ${token}` } });
+      const data = await r.json();
+      const list: Quiz[] = Array.isArray(data.quizzes) ? data.quizzes : [];
+      setTeacherQuizzes(prev => append ? [...prev, ...list] : list);
+      setTeacherHasMore(data.pagination?.hasMore ?? false);
+      setTeacherPage(page);
+    } catch { if (!append) setTeacherQuizzes([]); }
+    finally { if (append) setTeacherLoadingMore(false); }
+  }
 
   useEffect(() => { if (teacher?.name) setHostName(teacher.name); }, [teacher]);
 
@@ -222,6 +249,13 @@ export default function HostPage() {
                     </div>
                   ))}
                 </div>
+                {teacherHasMore && (
+                  <div className="quiz-load-more-row">
+                    <button className="quiz-load-more-btn" disabled={teacherLoadingMore} onClick={() => fetchTeacher(teacherPage + 1, true)}>
+                      {teacherLoadingMore ? 'Loading…' : 'Load more'}
+                    </button>
+                  </div>
+                )}
               </>
             )}
             {/* Public quizzes from other teachers */}
@@ -240,6 +274,13 @@ export default function HostPage() {
                     </div>
                   ))}
                 </div>
+                {publicHasMore && (
+                  <div className="quiz-load-more-row">
+                    <button className="quiz-load-more-btn" disabled={publicLoadingMore} onClick={() => fetchPublic(publicPage + 1, true)}>
+                      {publicLoadingMore ? 'Loading…' : 'Load more'}
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </>
@@ -265,6 +306,13 @@ export default function HostPage() {
                     </div>
                   ))}
                 </div>
+                {publicHasMore && (
+                  <div className="quiz-load-more-row">
+                    <button className="quiz-load-more-btn" disabled={publicLoadingMore} onClick={() => fetchPublic(publicPage + 1, true)}>
+                      {publicLoadingMore ? 'Loading…' : 'Load more'}
+                    </button>
+                  </div>
+                )}
               </>
             )}
           </>

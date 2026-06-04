@@ -47,10 +47,23 @@ function blankQuestion(type: QuestionType = 'multiple_choice'): Question {
   }
 }
 
+const QUIZ_PAGE_SIZE = 12;
+
+interface Pagination {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasMore: boolean;
+}
+
 export default function DashboardPage() {
   const nav = useNavigate();
   const { teacher, token, logout } = useAuth();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [pagination, setPagination] = useState<Pagination | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'quizzes' | 'create' | 'import'>('quizzes');
   const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
@@ -70,21 +83,36 @@ export default function DashboardPage() {
   const [importLoading, setImportLoading] = useState(false);
 
   useEffect(() => { if (!teacher) nav('/auth'); }, [teacher, nav]);
-  useEffect(() => { if (teacher) fetchQuizzes(); }, [teacher]);
+  useEffect(() => { if (teacher) fetchQuizzes(1, false); }, [teacher]);
 
-  async function fetchQuizzes() {
-    setLoading(true);
+  async function fetchQuizzes(page: number, append: boolean) {
+    if (append) setLoadingMore(true); else setLoading(true);
     try {
-      const res = await fetch(`${API}/teacher/quizzes/mine`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(
+        `${API}/teacher/quizzes/mine?page=${page}&limit=${QUIZ_PAGE_SIZE}`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
       const data = await res.json();
-      setQuizzes(Array.isArray(data) ? data : []);
-    } catch { setQuizzes([]); } finally { setLoading(false); }
+      const list: Quiz[] = Array.isArray(data.quizzes) ? data.quizzes : [];
+      setQuizzes(prev => append ? [...prev, ...list] : list);
+      setPagination(data.pagination ?? null);
+      setCurrentPage(page);
+    } catch {
+      if (!append) setQuizzes([]);
+    } finally {
+      if (append) setLoadingMore(false); else setLoading(false);
+    }
+  }
+
+  function loadMoreQuizzes() {
+    fetchQuizzes(currentPage + 1, true);
   }
 
   async function deleteQuiz(id: string) {
     if (!confirm('Delete this quiz? This cannot be undone.')) return;
     await fetch(`${API}/teacher/quizzes/${id}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token}` } });
-    setQuizzes(q => q.filter(x => x.id !== id));
+    // Re-fetch page 1 to keep pagination state clean
+    fetchQuizzes(1, false);
   }
 
   function startEdit(quiz: Quiz) {
@@ -124,13 +152,10 @@ export default function DashboardPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
-      if (isEdit) {
-        setQuizzes(q => q.map(x => x.id === editingQuizId ? data : x));
-      } else {
-        setQuizzes(q => [data, ...q]);
-      }
       cancelEdit();
       setActiveTab('quizzes');
+      // Refresh page 1 so pagination totals stay accurate
+      fetchQuizzes(1, false);
     } catch (err: any) { setCreateError(err.message); } finally { setCreateLoading(false); }
   }
 
@@ -208,7 +233,7 @@ export default function DashboardPage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
       setImportResult({ imported: data.imported, errors: data.errors || [] });
-      if (data.imported > 0) fetchQuizzes();
+      if (data.imported > 0) fetchQuizzes(1, false);
       if (fileRef.current) fileRef.current.value = '';
     } catch (err: any) { setImportResult({ imported: 0, errors: [err.message] }); } finally { setImportLoading(false); }
   }
@@ -448,29 +473,47 @@ export default function DashboardPage() {
                 <p>Create one manually or <button onClick={() => setActiveTab('import')}>import from a file</button>.</p>
               </div>
             ) : (
-              <div className="quiz-list">
-                {quizzes.map(q => (
-                  <motion.div key={q.id} className="quiz-row" layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-                    <div className="quiz-row-info">
-                      <div className="quiz-row-title">{q.title}</div>
-                      <div className="quiz-row-meta">
-                        {q.category && <span className="cat-badge">{q.category}</span>}
-                        <span className={`visibility-badge ${q.type === 'private' ? 'private' : 'public'}`}>
-                          {q.type === 'private' ? '🔒 Private' : '🌐 Public'}
-                        </span>
-                        {!q.published && <span className="draft-badge">⊘ Draft</span>}
-                        <span>{q.questions.length} questions</span>
-                        {q.createdAt && <span>{new Date(q.createdAt).toLocaleDateString()}</span>}
+              <>
+                {pagination && (
+                  <div className="quiz-list-pagination-info">
+                    {quizzes.length} of {pagination.total} quizzes
+                  </div>
+                )}
+                <div className="quiz-list">
+                  {quizzes.map(q => (
+                    <motion.div key={q.id} className="quiz-row" layout initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+                      <div className="quiz-row-info">
+                        <div className="quiz-row-title">{q.title}</div>
+                        <div className="quiz-row-meta">
+                          {q.category && <span className="cat-badge">{q.category}</span>}
+                          <span className={`visibility-badge ${q.type === 'private' ? 'private' : 'public'}`}>
+                            {q.type === 'private' ? '🔒 Private' : '🌐 Public'}
+                          </span>
+                          {!q.published && <span className="draft-badge">⊘ Draft</span>}
+                          <span>{q.questions.length} questions</span>
+                          {q.createdAt && <span>{new Date(q.createdAt).toLocaleDateString()}</span>}
+                        </div>
                       </div>
-                    </div>
-                    <div className="quiz-row-actions">
-                      <button className="btn-edit" onClick={() => startEdit(q)}>✏️ Edit</button>
-                      <button className="btn-host-quiz" onClick={() => nav('/host', { state: { preselect: q.id } })}>▶ Host</button>
-                      <button className="btn-delete" onClick={() => deleteQuiz(q.id)}>🗑</button>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                      <div className="quiz-row-actions">
+                        <button className="btn-edit" onClick={() => startEdit(q)}>✏️ Edit</button>
+                        <button className="btn-host-quiz" onClick={() => nav('/host', { state: { preselect: q.id } })}>▶ Host</button>
+                        <button className="btn-delete" onClick={() => deleteQuiz(q.id)}>🗑</button>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+                {pagination?.hasMore && (
+                  <div className="quiz-load-more-row">
+                    <button
+                      className="quiz-load-more-btn"
+                      onClick={loadMoreQuizzes}
+                      disabled={loadingMore}
+                    >
+                      {loadingMore ? <><span className="loading-spinner" /> Loading…</> : 'Load more quizzes'}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
           </div>
         )}
