@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { GameController, type GameView } from '../components/GameScreens';
 import './GamePage.css';
@@ -9,10 +9,13 @@ type Phase = 'join' | 'lobby' | 'playing';
 export default function JoinPage() {
   const nav = useNavigate();
   const socket = useSocket();
+  const [searchParams] = useSearchParams();
+
+  const qrCode = searchParams.get('code')?.toUpperCase().trim() ?? '';
 
   const [phase, setPhase] = useState<Phase>('join');
-  const [joinStep, setJoinStep] = useState(1);
-  const [code, setCode] = useState('');
+  const [joinStep, setJoinStep] = useState(() => qrCode ? 2 : 1);
+  const [code, setCode] = useState(() => qrCode);
   const [playerName, setPlayerName] = useState('');
   const [roomInfo, setRoomInfo] = useState<any>(null);
   const [players, setPlayers] = useState<{ name: string; score: number }[]>([]);

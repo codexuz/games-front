@@ -37,8 +37,7 @@ export default function HomePage() {
           transition={{ duration: 0.6, type: 'spring' }}
         >
           <div className="logo-glow" />
-          <span className="logo-icon">⚡</span>
-          <h1>QuizBlitz</h1>
+          <img src="/logo.png" alt="QuizBlitz" className="home-logo-img" />
           <p className="tagline">The ultimate real-time quiz platform</p>
         </motion.div>
 
