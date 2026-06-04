@@ -398,11 +398,21 @@
 }
 
 .player-tile {
-  padding: 12px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  border-radius: 14px;
   animation: slide-in 0.3s ease;
+}
+
+.player-tile-avatar {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
 }
 
 @keyframes slide-in {
@@ -614,8 +624,8 @@
 .player-chip {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
+  gap: 10px;
+  padding: 8px 14px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;

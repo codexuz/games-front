@@ -42,7 +42,7 @@ export default function HostPage() {
 
   const [roomCode, setRoomCode] = useState('');
   const [hostName, setHostName] = useState(() => teacher?.name || '');
-  const [players, setPlayers] = useState<{ name: string; score: number }[]>([]);
+  const [players, setPlayers] = useState<{ name: string; avatar?: string; score: number }[]>([]);
   const [connected, setConnected] = useState(socket.connected);
   const [gameView, setGameView] = useState<GameView>({ type: 'idle' });
 
@@ -364,7 +364,10 @@ export default function HostPage() {
         ) : (
           <div className="players-grid-host">
             {players.map((p, i) => (
-              <div key={i} className="player-tile"><div className="player-name">{p.name}</div></div>
+              <div key={i} className="player-tile">
+                {p.avatar && <img src={`/avatars/${p.avatar}.svg`} alt={p.avatar} className="player-tile-avatar" />}
+                <div className="player-name">{p.name}</div>
+              </div>
             ))}
           </div>
         )}

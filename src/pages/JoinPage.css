@@ -1,0 +1,118 @@
+/* ── Avatar picker page ──────────────────────────────────────────────────── */
+.join-page-avatar {
+  background: radial-gradient(ellipse at 50% 0%, rgba(124, 58, 237, 0.25) 0%, transparent 60%),
+              linear-gradient(180deg, #0a0a1a 0%, #12122a 100%);
+}
+
+.avatar-picker-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 32px 24px 40px;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.avatar-picker-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #f0f0ff;
+  margin: 0;
+}
+
+/* Selected avatar large preview */
+.avatar-selected-preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-preview-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: rgba(124, 58, 237, 0.18);
+  border: 3px solid rgba(124, 58, 237, 0.6);
+  padding: 8px;
+  box-shadow: 0 0 28px rgba(124, 58, 237, 0.45);
+  transition: all 0.25s;
+}
+
+.avatar-preview-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #e0e0ff;
+  letter-spacing: 0.3px;
+}
+
+/* Grid of avatar options */
+.avatar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  width: 100%;
+}
+
+.avatar-option {
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 6px;
+  cursor: pointer;
+  transition: all 0.18s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatar-option img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.avatar-option:hover {
+  border-color: rgba(124, 58, 237, 0.5);
+  background: rgba(124, 58, 237, 0.12);
+  transform: scale(1.08);
+}
+
+.avatar-option.selected {
+  border-color: #7c3aed;
+  background: rgba(124, 58, 237, 0.22);
+  box-shadow: 0 0 16px rgba(124, 58, 237, 0.5);
+  transform: scale(1.1);
+}
+
+.avatar-join-btn {
+  width: 100%;
+  max-width: 280px;
+  font-size: 1.1rem;
+  padding: 14px;
+  border-radius: 14px;
+}
+
+/* ── Lobby player chip with avatar ──────────────────────────────────────── */
+.player-chip-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .avatar-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .avatar-preview-img {
+    width: 72px;
+    height: 72px;
+  }
+}

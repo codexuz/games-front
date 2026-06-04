@@ -1044,6 +1044,26 @@
   border-color: rgba(124, 58, 237, 0.3);
 }
 
+.gs-lb-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 3px;
+  flex-shrink: 0;
+}
+
+.gs-player-avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px;
+  flex-shrink: 0;
+}
+
 .gs-lb-rank {
   width: 28px;
   font-weight: 800;
@@ -1171,6 +1191,19 @@
 .gs-podium-avatar-circle.rank-2 { background: linear-gradient(135deg, #9ca3af, #6b7280); }
 .gs-podium-avatar-circle.rank-3 { background: linear-gradient(135deg, #b45309, #92400e); }
 
+.gs-podium-avatar-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: contain;
+  padding: 6px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+}
+.gs-podium-avatar-img.rank-1 { border-color: #f59e0b; background: rgba(245, 158, 11, 0.15); }
+.gs-podium-avatar-img.rank-2 { border-color: #9ca3af; background: rgba(156, 163, 175, 0.12); }
+.gs-podium-avatar-img.rank-3 { border-color: #b45309; background: rgba(180, 83, 9, 0.12); }
+
 .gs-podium-player-name {
   font-weight: 600;
   font-size: 0.85rem;
@@ -1281,6 +1314,16 @@
   font-size: 0.7rem;
   font-weight: 700;
   color: #fff;
+}
+
+.gs-runner-avatar-img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: contain;
+  background: rgba(255, 255, 255, 0.07);
+  padding: 3px;
+  flex-shrink: 0;
 }
 
 .gs-runner-name {

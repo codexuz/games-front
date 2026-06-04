@@ -31,23 +31,32 @@ export interface QuestionData {
   role: 'host' | 'player';
   onAnswer?: (answer: any) => void;
   playerName?: string;
+  playerAvatar?: string;
   currentScore?: number;
 }
 
 export interface ResultData {
   type: QuestionType;
   questionData: Record<string, any>;
-  leaderboard: { name: string; score: number; correct: boolean; points: number }[];
+  leaderboard: { name: string; avatar?: string; score: number; correct: boolean; points: number }[];
   playerName?: string;
+  playerAvatar?: string;
   isLast: boolean;
   pollResults?: Record<number, number>;
 }
 
 export interface EndData {
-  leaderboard: { name: string; score: number }[];
+  leaderboard: { name: string; avatar?: string; score: number }[];
   playerName?: string;
+  playerAvatar?: string;
   onPlayAgain?: () => void;
   onHome: () => void;
+}
+
+function AvatarImg({ avatar, className }: { avatar?: string; className?: string }) {
+  const src = avatar ? `/avatars/${avatar}.svg` : null;
+  if (!src) return null;
+  return <img src={src} alt={avatar} className={className} />;
 }
 
 const BTN_COLORS = ['#e21b3c', '#1368ce', '#d89e00', '#26890c', '#9b59b6', '#e67e22', '#1abc9c', '#e74c3c'];
@@ -670,7 +679,10 @@ export function QuestionScreen({ data, onAnswer }: { data: QuestionData; onAnswe
       {data.role === 'player' && data.playerName && (
         <div className="gs-footer">
           <div className="gs-player-info">
-            <div className="gs-player-avatar">{data.playerName[0]?.toUpperCase()}</div>
+            {data.playerAvatar
+              ? <AvatarImg avatar={data.playerAvatar} className="gs-player-avatar-img" />
+              : <div className="gs-player-avatar">{data.playerName[0]?.toUpperCase()}</div>
+            }
             <div className="gs-player-details">
               <span className="gs-player-name">{data.playerName}</span>
               <span className="gs-player-score">{data.currentScore ?? 0} pts</span>
@@ -806,6 +818,7 @@ export function ResultScreen({ data }: { data: ResultData }) {
                 transition={{ layout: { type: 'spring', stiffness: 500, damping: 32 }, opacity: { delay: i * 0.06 } }}
               >
                 <motion.span className="gs-lb-rank" key={i} initial={{ scale: 1.4 }} animate={{ scale: 1 }}>{i + 1}</motion.span>
+                <AvatarImg avatar={p.avatar} className="gs-lb-avatar-img" />
                 <span className="gs-lb-name">{p.name}{isMe ? ' (you)' : ''}</span>
                 <span className="gs-lb-points">{p.points > 0 ? `+${p.points}` : '+0'}</span>
                 <CountUp className="gs-lb-score" from={p.prevScore} to={p.score} duration={0.9} />
@@ -819,7 +832,10 @@ export function ResultScreen({ data }: { data: ResultData }) {
       {isPlayer && me && (
         <div className="gs-footer">
           <div className="gs-player-info">
-            <div className="gs-player-avatar">{data.playerName![0]?.toUpperCase()}</div>
+            {data.playerAvatar
+              ? <AvatarImg avatar={data.playerAvatar} className="gs-player-avatar-img" />
+              : <div className="gs-player-avatar">{data.playerName![0]?.toUpperCase()}</div>
+            }
             <div className="gs-player-details">
               <span className="gs-player-name">{data.playerName}</span>
               <span className="gs-player-score">
@@ -890,9 +906,10 @@ export function EndScreen({ data }: { data: EndData }) {
                   transition={{ delay: 0.4 + slotIdx * 0.2 }}
                 >
                   {lbIdx === 0 && <div className="gs-podium-crown">👑</div>}
-                  <div className={`gs-podium-avatar-circle rank-${lbIdx + 1}`}>
-                    {entry.name[0]?.toUpperCase()}
-                  </div>
+                  {entry.avatar
+                    ? <AvatarImg avatar={entry.avatar} className={`gs-podium-avatar-img rank-${lbIdx + 1}`} />
+                    : <div className={`gs-podium-avatar-circle rank-${lbIdx + 1}`}>{entry.name[0]?.toUpperCase()}</div>
+                  }
                   <span className="gs-podium-player-name">{entry.name}</span>
                 </motion.div>
                 <motion.div
@@ -926,7 +943,10 @@ export function EndScreen({ data }: { data: EndData }) {
                   transition={{ delay: 1 + i * 0.05 }}
                 >
                   <span className="gs-runner-rank">{i + 4}</span>
-                  <span className="gs-runner-avatar">{p.name[0]?.toUpperCase()}</span>
+                  {p.avatar
+                    ? <AvatarImg avatar={p.avatar} className="gs-runner-avatar-img" />
+                    : <span className="gs-runner-avatar">{p.name[0]?.toUpperCase()}</span>
+                  }
                   <span className="gs-runner-name">{p.name}</span>
                   <span className="gs-runner-score">{p.score}</span>
                 </motion.div>
