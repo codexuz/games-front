@@ -1,6 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, animate } from 'framer-motion';
 import './GameScreens.css';
+
+// ── Animated number that counts up from `from` to `to` ───────────────────────
+function CountUp({ from, to, duration = 1, className }: { from: number; to: number; duration?: number; className?: string }) {
+  const [display, setDisplay] = useState(Math.round(from));
+  useEffect(() => {
+    const controls = animate(from, to, {
+      duration,
+      ease: 'easeOut',
+      onUpdate: v => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [from, to, duration]);
+  return <span className={className}>{display}</span>;
+}
 
 // ── Shared types ─────────────────────────────────────────────────────────────
 export type QuestionType = 'multiple_choice' | 'true_false' | 'type_answer' | 'slider' | 'poll' | 'ordering';
@@ -673,6 +687,18 @@ export function ResultScreen({ data }: { data: ResultData }) {
   const me = data.leaderboard.find(p => p.name === data.playerName);
   const isPlayer = !!data.playerName;
 
+  // Kahoot-style scoreboard climb: rows start in the PREVIOUS ranking (score
+  // before this round's points were added) then slide to their new positions.
+  const withPrev = data.leaderboard.map(p => ({ ...p, prevScore: p.score - p.points }));
+  const initialOrder = [...withPrev].sort((a, b) => b.prevScore - a.prevScore);
+  const finalOrder = [...withPrev].sort((a, b) => b.score - a.score);
+  const [showFinal, setShowFinal] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setShowFinal(true), 900); // let the count-up run first
+    return () => clearTimeout(t);
+  }, []);
+  const ordered = (showFinal ? finalOrder : initialOrder).slice(0, 5);
+
   // Get display info based on type
   function getCorrectDisplay(): string {
     switch (data.type) {
@@ -766,22 +792,23 @@ export function ResultScreen({ data }: { data: ResultData }) {
           </div>
         )}
 
-        {/* Leaderboard preview */}
+        {/* Leaderboard preview — rows animate (layout) to their new rank */}
         <div className="gs-result-leaderboard">
-          {data.leaderboard.slice(0, 5).map((p, i) => {
+          {ordered.map((p, i) => {
             const isMe = p.name === data.playerName;
             return (
               <motion.div
-                key={i}
+                key={p.name}
+                layout
                 className={`gs-result-lb-row ${isMe ? 'me' : ''} ${p.correct ? 'was-correct' : ''}`}
-                initial={{ opacity: 0, x: -15 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + i * 0.08 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ layout: { type: 'spring', stiffness: 500, damping: 32 }, opacity: { delay: i * 0.06 } }}
               >
-                <span className="gs-lb-rank">{i + 1}</span>
+                <motion.span className="gs-lb-rank" key={i} initial={{ scale: 1.4 }} animate={{ scale: 1 }}>{i + 1}</motion.span>
                 <span className="gs-lb-name">{p.name}{isMe ? ' (you)' : ''}</span>
-                <span className="gs-lb-points">{p.correct ? `+${p.points}` : '+0'}</span>
-                <span className="gs-lb-score">{p.score}</span>
+                <span className="gs-lb-points">{p.points > 0 ? `+${p.points}` : '+0'}</span>
+                <CountUp className="gs-lb-score" from={p.prevScore} to={p.score} duration={0.9} />
               </motion.div>
             );
           })}
@@ -795,7 +822,9 @@ export function ResultScreen({ data }: { data: ResultData }) {
             <div className="gs-player-avatar">{data.playerName![0]?.toUpperCase()}</div>
             <div className="gs-player-details">
               <span className="gs-player-name">{data.playerName}</span>
-              <span className="gs-player-score">{me.score} pts</span>
+              <span className="gs-player-score">
+                <CountUp from={me.score - me.points} to={me.score} duration={0.9} /> pts
+              </span>
             </div>
           </div>
         </div>
