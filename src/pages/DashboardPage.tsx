@@ -20,6 +20,8 @@ interface Quiz {
   id: string;
   title: string;
   category?: string;
+  type?: 'public' | 'private';
+  published?: boolean;
   createdAt?: string;
   questions: Question[];
 }
@@ -56,6 +58,8 @@ export default function DashboardPage() {
   // Create form
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState('');
+  const [quizType, setQuizType] = useState<'public' | 'private'>('public');
+  const [published, setPublished] = useState(true);
   const [questions, setQuestions] = useState<Question[]>([blankQuestion()]);
   const [createError, setCreateError] = useState('');
   const [createLoading, setCreateLoading] = useState(false);
@@ -71,7 +75,7 @@ export default function DashboardPage() {
   async function fetchQuizzes() {
     setLoading(true);
     try {
-      const res = await fetch(`${API}/teacher/quizzes`, { headers: { Authorization: `Bearer ${token}` } });
+      const res = await fetch(`${API}/teacher/quizzes/mine`, { headers: { Authorization: `Bearer ${token}` } });
       const data = await res.json();
       setQuizzes(Array.isArray(data) ? data : []);
     } catch { setQuizzes([]); } finally { setLoading(false); }
@@ -87,6 +91,8 @@ export default function DashboardPage() {
     setEditingQuizId(quiz.id);
     setTitle(quiz.title);
     setCategory(quiz.category || '');
+    setQuizType(quiz.type || 'public');
+    setPublished(quiz.published ?? true);
     setQuestions(quiz.questions.map(q => ({ ...q })));
     setCreateError('');
     setActiveTab('create');
@@ -96,6 +102,8 @@ export default function DashboardPage() {
     setEditingQuizId(null);
     setTitle('');
     setCategory('');
+    setQuizType('public');
+    setPublished(true);
     setQuestions([blankQuestion()]);
     setCreateError('');
   }
@@ -112,7 +120,7 @@ export default function DashboardPage() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ title, category, questions }),
+        body: JSON.stringify({ title, category, type: quizType, published, questions }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error);
@@ -447,6 +455,10 @@ export default function DashboardPage() {
                       <div className="quiz-row-title">{q.title}</div>
                       <div className="quiz-row-meta">
                         {q.category && <span className="cat-badge">{q.category}</span>}
+                        <span className={`visibility-badge ${q.type === 'private' ? 'private' : 'public'}`}>
+                          {q.type === 'private' ? '🔒 Private' : '🌐 Public'}
+                        </span>
+                        {!q.published && <span className="draft-badge">⊘ Draft</span>}
                         <span>{q.questions.length} questions</span>
                         {q.createdAt && <span>{new Date(q.createdAt).toLocaleDateString()}</span>}
                       </div>
@@ -482,6 +494,30 @@ export default function DashboardPage() {
                 <div className="field-group">
                   <label>Category</label>
                   <input className="input-field" placeholder="e.g. History" value={category} onChange={e => setCategory(e.target.value)} />
+                </div>
+              </div>
+              <div className="form-row">
+                <div className="field-group">
+                  <label>Visibility</label>
+                  <select className="input-field" value={quizType} onChange={e => setQuizType(e.target.value as 'public' | 'private')}>
+                    <option value="public">🌐 Public — visible to everyone</option>
+                    <option value="private">🔒 Private — only you can host</option>
+                  </select>
+                </div>
+                <div className="field-group">
+                  <label>Published</label>
+                  <div className="published-toggle-row">
+                    <button
+                      type="button"
+                      className={`toggle-btn ${published ? 'toggle-on' : 'toggle-off'}`}
+                      onClick={() => setPublished(p => !p)}
+                    >
+                      {published ? '✓ Published' : '⊘ Draft'}
+                    </button>
+                    <span className="toggle-hint">
+                      {published ? 'Visible in public listing' : 'Hidden from public listing'}
+                    </span>
+                  </div>
                 </div>
               </div>
 

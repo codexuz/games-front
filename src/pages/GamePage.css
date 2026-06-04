@@ -136,6 +136,15 @@
   border-color: rgba(124, 58, 237, 0.4);
 }
 
+.quiz-card.public-card {
+  border-color: rgba(34, 197, 94, 0.15);
+}
+
+.quiz-card.public-card:hover {
+  border-color: rgba(34, 197, 94, 0.4);
+  box-shadow: 0 8px 25px rgba(34, 197, 94, 0.1);
+}
+
 .quiz-emoji {
   font-size: 2rem;
   margin-bottom: 4px;

@@ -14,6 +14,9 @@ type Phase = 'setup' | 'lobby' | 'playing' | 'ended';
 interface Quiz {
   id: string;
   title: string;
+  category?: string;
+  teacherId?: string;
+  type?: 'public' | 'private';
   questions: { id: string; text: string; type: string; questionData: any; timeLimit: number; points: number }[];
 }
 
@@ -28,6 +31,7 @@ export default function HostPage() {
   const [showShare, setShowShare] = useState(false);
 
   const [teacherQuizzes, setTeacherQuizzes] = useState<Quiz[]>([]);
+  const [publicQuizzes, setPublicQuizzes] = useState<Quiz[]>([]);
   const [roomCode, setRoomCode] = useState('');
   const [hostName, setHostName] = useState(() => teacher?.name || '');
   const [players, setPlayers] = useState<{ name: string; score: number }[]>([]);
@@ -90,8 +94,16 @@ export default function HostPage() {
 
 
   useEffect(() => {
+    // Always fetch public quizzes (no auth needed)
+    fetch(`${API}/quizzes`)
+      .then(r => r.json())
+      .then(d => setPublicQuizzes(Array.isArray(d) ? d : []))
+      .catch(() => setPublicQuizzes([]));
+  }, []);
+
+  useEffect(() => {
     if (!teacher || !token) { setTeacherQuizzes([]); return; }
-    fetch(`${API}/teacher/quizzes`, { headers: { Authorization: `Bearer ${token}` } })
+    fetch(`${API}/teacher/quizzes/mine`, { headers: { Authorization: `Bearer ${token}` } })
       .then(r => r.json())
       .then(d => setTeacherQuizzes(Array.isArray(d) ? d : []))
       .catch(() => setTeacherQuizzes([]));
@@ -193,29 +205,69 @@ export default function HostPage() {
       <div className="setup-form">
         <input className="input-field" placeholder="Your name (host)" value={hostName} onChange={e => setHostName(e.target.value)} />
         {teacher ? (
-          teacherQuizzes.length > 0 && (
-            <>
-              <div className="quiz-list-header">
-                <h3>My Quizzes</h3>
-                <button className="btn-secondary" onClick={() => nav('/dashboard')}>Manage →</button>
-              </div>
-              <div className="quiz-grid">
-                {teacherQuizzes.map(q => (
-                  <div key={q.id} className="quiz-card teacher-card" onClick={() => createRoom(q.id)}>
-                    <div className="quiz-emoji">✏️</div>
-                    <div className="quiz-title">{q.title}</div>
-                    <div className="quiz-meta">{q.questions.length} questions</div>
-                    <div className="quiz-start-hint">Click to host →</div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )
+          <>
+            {teacherQuizzes.length > 0 && (
+              <>
+                <div className="quiz-list-header">
+                  <h3>My Quizzes</h3>
+                  <button className="btn-secondary" onClick={() => nav('/dashboard')}>Manage →</button>
+                </div>
+                <div className="quiz-grid">
+                  {teacherQuizzes.map(q => (
+                    <div key={q.id} className="quiz-card teacher-card" onClick={() => createRoom(q.id)}>
+                      <div className="quiz-emoji">✏️</div>
+                      <div className="quiz-title">{q.title}</div>
+                      <div className="quiz-meta">{q.questions.length} questions</div>
+                      <div className="quiz-start-hint">Click to host →</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+            {/* Public quizzes from other teachers */}
+            {publicQuizzes.filter(q => q.teacherId !== teacher.id).length > 0 && (
+              <>
+                <div className="quiz-list-header" style={{ marginTop: teacherQuizzes.length > 0 ? 24 : 0 }}>
+                  <h3>🌐 Public Quizzes</h3>
+                </div>
+                <div className="quiz-grid">
+                  {publicQuizzes.filter(q => q.teacherId !== teacher.id).map(q => (
+                    <div key={q.id} className="quiz-card public-card" onClick={() => createRoom(q.id)}>
+                      <div className="quiz-emoji">🌐</div>
+                      <div className="quiz-title">{q.title}</div>
+                      <div className="quiz-meta">{q.questions.length} questions{q.category ? ` · ${q.category}` : ''}</div>
+                      <div className="quiz-start-hint">Click to host →</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         ) : (
-          <div className="teacher-cta">
-            <span>👩‍🏫 Teacher?</span>
-            <button className="btn-secondary" onClick={() => nav('/auth')}>Sign in to use your quizzes</button>
-          </div>
+          <>
+            <div className="teacher-cta">
+              <span>👩‍🏫 Teacher?</span>
+              <button className="btn-secondary" onClick={() => nav('/auth')}>Sign in to use your quizzes</button>
+            </div>
+            {/* Public quizzes for unauthenticated users too */}
+            {publicQuizzes.length > 0 && (
+              <>
+                <div className="quiz-list-header" style={{ marginTop: 24 }}>
+                  <h3>🌐 Public Quizzes</h3>
+                </div>
+                <div className="quiz-grid">
+                  {publicQuizzes.map(q => (
+                    <div key={q.id} className="quiz-card public-card" onClick={() => createRoom(q.id)}>
+                      <div className="quiz-emoji">🌐</div>
+                      <div className="quiz-title">{q.title}</div>
+                      <div className="quiz-meta">{q.questions.length} questions{q.category ? ` · ${q.category}` : ''}</div>
+                      <div className="quiz-start-hint">Click to host →</div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </>
         )}
       </div>
     </div>
